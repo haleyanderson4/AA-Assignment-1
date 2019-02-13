@@ -22,6 +22,7 @@ public class Main
         String startState = "";
         Set<String> nfaAcceptS = new HashSet<String>;
         List<String> nfaRules = new ArrayList<String>;
+        List<String> nfaEplisonRules = new ArrayList<String>;
         int lineCount = 1;
         while (sc.hasNextLine()){
             String line = sc.nextLine();
@@ -55,7 +56,10 @@ public class Main
                     lineCount++;
                     break;
                 default: 
-                    nfaRules.add(line);
+                    if(line.subset(2, 5) == "EPS")
+                        nfaEplisonRules.add(line);
+                    else
+                        nfaRules.add(line);
                     break; 
         }
         
@@ -71,27 +75,39 @@ public class Main
     public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
     {
         String newState = ""; //this is the state we will go to next
+        
+       
+            for(int j = 0; j < nfaEplisonRules.size(); j++)
+                    {
+                        Character ruleState = nfaRules.get(j).charAt(0);
+                        if(ruleState == currentState.charAt(i))
+                        {
+                            newState = newState + ruleState;
+                        }
+                    } //creates the combined eplison state we will be moving into 
+        
+        
         for(int i = 0; i < nfaRules.size(); i++) //loop through rules to see where this state goes
         {
             String line = nfaRules.get(i);
-            while(True)
-            {
+            
+            
                 for(int stateCount = 0; stateCount < currentState.length(); stateCount++)
                 {
+                    
+                    
                     for(int j = 0; j < nfaRules.size(); j++)
                     {
-                        int charCount = 0;
-                        if(line.charAt(charCount) == currentState.charAt(i)
+                        Character ruleState = nfaRules.get(j).charAt(0);
+                        if(ruleState == currentState.charAt(i))
                         {
+                            Character letter = nfaRules.get(j).charAt(2);
                             
                         }
-                        if(line.charAt(charCount) == ',')
-                        {
-                            break; //if you hit the comma then the current state is not represented
-                        }
+                        
                     }
                 }
-            }
+            
             
         }
         
