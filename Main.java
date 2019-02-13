@@ -62,5 +62,39 @@ public class Main
         List<String> dfaStates = new ArrayList<String>;
         List<String> dfaAcceptS = new ArrayList<String>;
         List<String> dfaRules = new ArrayList<String>;
+        //variable declarations
+        
+        runThrough(startState, nfaRules, dfaRules, dfaStates);
+        //calling the recursive method to create the dfaRules, begins with start state
+    }
+    
+    public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
+    {
+        String newState = ""; //this is the state we will go to next
+        for(int i = 0; i < nfaRules.size(); i++) //loop through rules to see where this state goes
+        {
+            String line = nfaRules.get(i);
+            while(True)
+            {
+                for(int stateCount = 0; stateCount < currentState.length(); stateCount++)
+                {
+                    for(int j = 0; j < nfaRules.size(); j++)
+                    {
+                        int charCount = 0;
+                        if(line.charAt(charCount) == currentState.charAt(i)
+                        {
+                            
+                        }
+                        if(line.charAt(charCount) == ',')
+                        {
+                            break; //if you hit the comma then the current state is not represented
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        return newState;
     }
 }
