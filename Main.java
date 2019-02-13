@@ -67,6 +67,19 @@ public class Main
         List<String> dfaAcceptS = new ArrayList<String>;
         List<String> dfaRules = new ArrayList<String>;
         //variable declarations
+            
+        List<String> eplisonClosure = new ArrayList<String>;
+        for(int i = 0; i < nfaStates; i++)
+        {
+            for(int j = 0; j < nfaEplisonRules.size(); j++)
+            {
+                Character ruleState = nfaEplisonRules.get(j).charAt(0);
+                if(ruleState == dfaStates.get(i))
+                 {
+                    newState = newState + ruleState;
+                 }
+            } //creates the combined eplison state we will be moving into 
+        }
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
         //calling the recursive method to create the dfaRules, begins with start state
@@ -77,14 +90,7 @@ public class Main
         String newState = ""; //this is the state we will go to next
         
        
-            for(int j = 0; j < nfaEplisonRules.size(); j++)
-                    {
-                        Character ruleState = nfaRules.get(j).charAt(0);
-                        if(ruleState == currentState.charAt(i))
-                        {
-                            newState = newState + ruleState;
-                        }
-                    } //creates the combined eplison state we will be moving into 
+            
         
         
         for(int i = 0; i < nfaRules.size(); i++) //loop through rules to see where this state goes
