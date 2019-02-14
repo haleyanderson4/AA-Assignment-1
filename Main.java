@@ -24,10 +24,10 @@ public class Main
         List<String> nfaRules = new ArrayList<String>;
         List<String> nfaEplisonRules = new ArrayList<String>;
         int lineCount = 1;
-        while (sc.hasNextLine()){
+        while (sc.hasNextLine()){  //loop through all the lines in text file
             String line = sc.nextLine();
-            switch (lineCount){
-                case 1: lineCount = 1;
+            switch (lineCount){  
+                case 1: lineCount = 1;  //taking in states
                     for (character c in line){
                         if (c != '\t'){
                             nfaStates.add(c);
@@ -35,7 +35,7 @@ public class Main
                     }
                     lineCount++;
                     break;
-                case 2: lineCount = 2;
+                case 2: lineCount = 2; //language
                     for (character c in line){
                         if (c != '\t'){
                             nfaStates.add(c);
@@ -43,11 +43,11 @@ public class Main
                     }
                     lineCount++;
                     break;
-                case 3: lineCount = 3;
+                case 3: lineCount = 3; //start state
                     startState = line;
                     lineCount++;
                     break;
-                case 4: lineCount = 4;
+                case 4: lineCount = 4; //accept state
                     for (character c in line){
                         if (c != '\t'){
                             nfaAcceptS.add(c);
@@ -55,7 +55,7 @@ public class Main
                     }
                     lineCount++;
                     break;
-                default: 
+                default: //transitions 
                     if(line.subset(2, 5) == "EPS")
                         nfaEplisonRules.add(line);
                     else
