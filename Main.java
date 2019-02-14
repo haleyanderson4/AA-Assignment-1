@@ -58,7 +58,7 @@ public class Main
                     lineCount++;
                     break;
                 default: //transitions 
-                    if(line.subset(2, 5) == "EPS")
+                    if(line.substring(2, 5) == "EPS")
                         nfaEplisonRules.add(line);
                     else
                         nfaRules.add(line);
@@ -82,61 +82,78 @@ public class Main
     {
         for(int checkState = 0; checkState < nfaStates; checkState++) //looping through all states in original NFA
         {
-            String newState = "{" + ruleState; //creating the grouped state
+            String newState = "{";
             for(int checkRule = 0; checkRule < nfaEplisonRules.size(); checkRule++) //looping through all of the rules that have eplisons
             {
-                String ruleState = nfaEplisonRules.get(checkRule).subset(0, 1); //this is the state that is mentioned in the eplison rule
+                String ruleState = nfaEplisonRules.get(checkRule).substring(0, 1); //this is the state that is mentioned in the eplison rule
+                newState = newState + ruleState; //creating the grouped state
                 if(ruleState == nfaStates.get(checkState)) // if the state mentioned is equal to the original state we are looking at, we move to combine them
                  {
-                    String destinationState = nfaEplisonRules.get(checkRule).subset(6));
+                    String destinationState = nfaEplisonRules.get(checkRule).substring(6));
                     newState = newState + "," + destinationState; //this is creating the grouped state
                     for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that the destination state isnt an eplison closure
                     {
                         String current = eplisonClosure.get(alreadyClosed); //the state set
-                        String eplisonState = current.subset(1,2); //to skip the { and look at the first state
+                        String eplisonState = current.substring(1,2); //to skip the { and look at the first state
                         if(eplisonState == desintationState) //if they match
                         {
-                            newState = "," + eplisonState.subset(1,-1); // add the cascading effect to the state we are looking at
+                            newState = "," + eplisonState.substring(1,-1); // add the cascading effect to the state we are looking at
                         }
                     } // do this until we know it doesnt eplison to anything else
                  } //do this for all rules
             }
             
             newState = newState + "}"; //end the eplison state pairing
-            eplisonClosure.add(newState);
+            eplisonClosure.add(newState); //add to epsilon list!
         } //creates the combined eplison state we will be moving into 
     }
     
     public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
     {
-        String newState = ""; //this is the state we will go to next
+        String destinationState = "{"; //this is the state we will go to next
+        String newRule = currentState + ",";
         
-       
-            
-        
-        
-        for(int i = 0; i < nfaRules.size(); i++) //loop through rules to see where this state goes
+        for(int stateCount = 0; stateCount < currentState.length(); stateCount++) // if our current state has multiple states
         {
-            String line = nfaRules.get(i);
+            if(currentState.charAt(stateCount) == ('{' || ',' || '}') ) //so we're not looking at nothing
+            {
+                continue;
+            }
+            //need to split this into looking for one letter of the alphabet at a time
             
-            
-                for(int stateCount = 0; stateCount < currentState.length(); stateCount++)
+            String state = currentState.substring(stateCount, stateCount + 1); //the actual state we are finding the next of
+            for(int rules = 0; rules < nfaRules.size(); rules++) //loop through rules to see where this state goes
+            {
+                String ruleState = nfaRules.get(rules).substring(0, 1); //to get the state of the rule we are looking at
+                if(ruleState != state || //only look at rules that deal with the state we currently have
+                   ( currentState.charAt(stateCount) == ('{' || ',' || '}') ) ) //so we're not looking at nothing
                 {
+                    continue;
+                }
+                else
+                {
+                    String currentRule = nfaRules.get(rules); //this is the full rule we are looking at
+                    newRule = currentRule.substring(2,3); // adding the letter to the rule
+                    destinationState = destinationState + "," + currentRule.substring(4); //adding this rule's destination state to the overall destination state
                     
-                    
-                    for(int j = 0; j < nfaRules.size(); j++)
+                    boolean sovled = false;
+                    for(int i = 0; i < dfaStates.size(); i++)
                     {
-                        Character ruleState = nfaRules.get(j).charAt(0);
-                        if(ruleState == currentState.charAt(i))
+                        if(dfaStates.get(i).substring(0,-1) == destinationState) //if that state has already been solved
                         {
-                            Character letter = nfaRules.get(j).charAt(2);
-                            
+                            solved = true;
                         }
-                        
+                    }
+                    if(solved == false) //so only run through with the new state if it hasnt already been solved
+                    {
+                        runThrough(destinationState, nfaRules, dfaRules, dfaStates); // to see what else the state goes to
+                    }
+                    else
+                    {
+                        destinationState //needs to be added to the list, but differentiate between letters
                     }
                 }
-            
-            
+            }
         }
         
         return newState;
