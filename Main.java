@@ -69,7 +69,7 @@ public class Main
                         nfaRules.add(line);
                     break; 
             }
-        }
+        
         
         List<String> dfaStates = new ArrayList<String>;
         List<String> dfaAcceptS = new ArrayList<String>;
