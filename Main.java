@@ -24,20 +24,25 @@ public class Main
         List<String> nfaRules = new ArrayList<String>;
         List<String> nfaEplisonRules = new ArrayList<String>;
         int lineCount = 1;
-        while (sc.hasNextLine()){  //loop through all the lines in text file
+        while (sc.hasNextLine())  //loop through all the lines in text file
+        {  
             String line = sc.nextLine();
             switch (lineCount){  
                 case 1: lineCount = 1;  //taking in states
-                    for (character c in line){
-                        if (c != '\t'){
+                    for (character c in line)
+                    {
+                        if (c != '\t')
+                        {
                             nfaStates.add(c);
                         }
                     }
                     lineCount++;
                     break;
                 case 2: lineCount = 2; //language
-                    for (character c in line){
-                        if (c != '\t'){
+                    for (character c in line)
+                    {
+                        if (c != '\t')
+                        {
                             nfaStates.add(c);
                         }
                     }
@@ -48,8 +53,10 @@ public class Main
                     lineCount++;
                     break;
                 case 4: lineCount = 4; //accept state
-                    for (character c in line){
-                        if (c != '\t'){
+                    for (character c in line)
+                    {
+                        if (c != '\t')
+                        {
                             nfaAcceptS.add(c);
                         }
                     }
@@ -61,6 +68,7 @@ public class Main
                     else
                         nfaRules.add(line);
                     break; 
+            }
         }
         
         List<String> dfaStates = new ArrayList<String>;
