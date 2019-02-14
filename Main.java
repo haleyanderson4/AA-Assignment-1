@@ -17,32 +17,29 @@ public class Main
         
         File file = new File(fileName); 
         Scanner sc = new Scanner(file); 
-        List<String> nfaStates = new ArrayList<String>;
-        List<String> language = new ArrayList<String>;
+        List<String> nfaStates = new ArrayList<String>();
+        List<String> language = new ArrayList<String>();
         String startState = "";
-        Set<String> nfaAcceptS = new HashSet<String>;
-        List<String> nfaRules = new ArrayList<String>;
-        List<String> nfaEplisonRules = new ArrayList<String>;
+        Set<String> nfaAcceptS = new HashSet<String>();
+        List<String> nfaRules = new ArrayList<String()>;
+        List<String> nfaEplisonRules = new ArrayList<String>();
         int lineCount = 1;
-        while (sc.hasNextLine())  //loop through all the lines in text file
-        {  
+        while (sc.hasNextLine())
+        {  //loop through all the lines in text file
             String line = sc.nextLine();
-            switch (lineCount){  
+            switch (lineCount)
+            {  
                 case 1: lineCount = 1;  //taking in states
-                    for (character c in line)
-                    {
-                        if (c != '\t')
-                        {
+                    for (character c in line){
+                        if (c != '\t'){
                             nfaStates.add(c);
                         }
                     }
                     lineCount++;
                     break;
                 case 2: lineCount = 2; //language
-                    for (character c in line)
-                    {
-                        if (c != '\t')
-                        {
+                    for (character c in line){
+                        if (c != '\t'){
                             nfaStates.add(c);
                         }
                     }
@@ -53,10 +50,8 @@ public class Main
                     lineCount++;
                     break;
                 case 4: lineCount = 4; //accept state
-                    for (character c in line)
-                    {
-                        if (c != '\t')
-                        {
+                    for (character c in line){
+                        if (c != '\t'){
                             nfaAcceptS.add(c);
                         }
                     }
@@ -70,14 +65,13 @@ public class Main
                     break; 
             }
         
-        
-        List<String> dfaStates = new ArrayList<String>;
-        List<String> dfaAcceptS = new ArrayList<String>;
-        List<String> dfaRules = new ArrayList<String>;
-        //variable declarations
+            List<String> dfaStates = new ArrayList<String>();
+            List<String> dfaAcceptS = new ArrayList<String>();
+            List<String> dfaRules = new ArrayList<String>();
+            //variable declarations
         }
         
-        List<String> eplisonClosure = new ArrayList<String>; //list of new eplison closure states
+        List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
         epsClosureCreate(eplisonClosure); //method to populate eplison states
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
@@ -88,28 +82,29 @@ public class Main
     {
         for(int checkState = 0; checkState < nfaStates; checkState++) //looping through all states in original NFA
         {
+            String newState = "{" + ruleState; //creating the grouped state
             for(int checkRule = 0; checkRule < nfaEplisonRules.size(); checkRule++) //looping through all of the rules that have eplisons
             {
                 String ruleState = nfaEplisonRules.get(checkRule).subset(0, 1); //this is the state that is mentioned in the eplison rule
                 if(ruleState == nfaStates.get(checkState)) // if the state mentioned is equal to the original state we are looking at, we move to combine them
                  {
                     String destinationState = nfaEplisonRules.get(checkRule).subset(6));
-                    newState = "(" + ruleState + "," + destinationState; //this is creating the grouped state
-                    for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that the destination state doesn't have
-                        //anything that is eplison closes to
+                    newState = newState + "," + destinationState; //this is creating the grouped state
+                    for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that the destination state isnt an eplison closure
                     {
-                        String current = eplisonClosure.get(alreadyClosed);
-                        for(Character c in current)
+                        String current = eplisonClosure.get(alreadyClosed); //the state set
+                        String eplisonState = current.subset(1,2); //to skip the { and look at the first state
+                        if(eplisonState == desintationState) //if they match
                         {
-                            if(c == ruleState)
-                            {
-                                eplisonClosure.set(alreadyClosed) = current + ruleState;
-                            }
+                            newState = "," + eplisonState.subset(1,-1); // add the cascading effect to the state we are looking at
                         }
-                    }
-                    
-                 }
-            } //creates the combined eplison state we will be moving into 
+                    } // do this until we know it doesnt eplison to anything else
+                 } //do this for all rules
+            }
+            
+            newState = newState + "}"; //end the eplison state pairing
+            eplisonClosure.add(newState);
+        } //creates the combined eplison state we will be moving into 
     }
     
     public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
