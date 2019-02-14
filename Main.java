@@ -67,22 +67,41 @@ public class Main
         List<String> dfaAcceptS = new ArrayList<String>;
         List<String> dfaRules = new ArrayList<String>;
         //variable declarations
-            
-        List<String> eplisonClosure = new ArrayList<String>;
-        for(int i = 0; i < nfaStates; i++)
-        {
-            for(int j = 0; j < nfaEplisonRules.size(); j++)
-            {
-                Character ruleState = nfaEplisonRules.get(j).charAt(0);
-                if(ruleState == dfaStates.get(i))
-                 {
-                    newState = newState + ruleState;
-                 }
-            } //creates the combined eplison state we will be moving into 
         }
+        
+        List<String> eplisonClosure = new ArrayList<String>; //list of new eplison closure states
+        epsClosureCreate(eplisonClosure); //method to populate eplison states
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
         //calling the recursive method to create the dfaRules, begins with start state
+    }
+    
+    public static List<String> epsClosureCreate(List<String> eplisonClosure)
+    {
+        for(int checkState = 0; checkState < nfaStates; checkState++) //looping through all states in original NFA
+        {
+            for(int checkRule = 0; checkRule < nfaEplisonRules.size(); checkRule++) //looping through all of the rules that have eplisons
+            {
+                String ruleState = nfaEplisonRules.get(checkRule).subset(0, 1); //this is the state that is mentioned in the eplison rule
+                if(ruleState == nfaStates.get(checkState)) // if the state mentioned is equal to the original state we are looking at, we move to combine them
+                 {
+                    String destinationState = nfaEplisonRules.get(checkRule).subset(6));
+                    newState = "(" + ruleState + "," + destinationState; //this is creating the grouped state
+                    for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that the destination state doesn't have
+                        //anything that is eplison closes to
+                    {
+                        String current = eplisonClosure.get(alreadyClosed);
+                        for(Character c in current)
+                        {
+                            if(c == ruleState)
+                            {
+                                eplisonClosure.set(alreadyClosed) = current + ruleState;
+                            }
+                        }
+                    }
+                    
+                 }
+            } //creates the combined eplison state we will be moving into 
     }
     
     public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
