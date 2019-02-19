@@ -91,7 +91,7 @@ public class Assignment1
             List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
             epsClosureCreate(eplisonClosure, nfaEplisonRules, nfaStates); //method to populate eplison states
 
-            runThrough(startState, nfaRules, dfaRules, dfaStates);
+            //runThrough(startState, nfaRules, dfaRules, dfaStates);
             //calling the recursive method to create the dfaRules, begins with start state
 
             // write DFA to new text file
