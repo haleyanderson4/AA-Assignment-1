@@ -12,59 +12,73 @@ public class Main
 
     public static void main(String[] args)
     {
-        Scanner in = new Scanner(System.in); 
-        String fileName = in.args[0]; 
-        
-        File file = new File(fileName); 
-        Scanner sc = new Scanner(file); 
-        List<String> nfaStates = new ArrayList<String>();
-        List<String> language = new ArrayList<String>();
-        String startState = "";
-        Set<String> nfaAcceptS = new HashSet<String>();
-        List<String> nfaRules = new ArrayList<String()>;
-        List<String> nfaEplisonRules = new ArrayList<String>();
-        int lineCount = 1;
-        while (sc.hasNextLine())
-        {  //loop through all the lines in text file
-            String line = sc.nextLine();
-            switch (lineCount)
+        try
+        {
+            //Scanner in = new Scanner(System.in); 
+            File file = null;
+            if (0 < args.length) {
+               file = new File(args[0]);
+            } else {
+               System.err.println("Invalid arguments count:" + args.length);
+            } 
+            Scanner sc = new Scanner(file); 
+            List<String> nfaStates = new ArrayList<String>();
+            List<String> language = new ArrayList<String>();
+            String startState = "";
+            Set<String> nfaAcceptS = new HashSet<String>();
+            List<String> nfaRules = new ArrayList<String>();
+            List<String> nfaEplisonRules = new ArrayList<String>();
+            int lineCount = 1;
+            while (sc.hasNextLine())  //loop through all the lines in text file
             {  
-                case 1: lineCount = 1;  //taking in states
-                    for (character c in line){
-                        if (c != '\t'){
-                            nfaStates.add(c);
+                String line = sc.nextLine();
+                switch (lineCount){  
+                    case 1: lineCount = 1;  //taking in states
+                        for (int i = 0; i < line.length(); i++)
+                        {
+                            char c = line.charAt(i);
+                            if (c != '\t')
+                            {
+                                nfaStates.add(""+c);
+                            }
                         }
-                    }
-                    lineCount++;
-                    break;
-                case 2: lineCount = 2; //language
-                    for (character c in line){
-                        if (c != '\t'){
-                            nfaStates.add(c);
+                        lineCount++;
+                        break;
+                    case 2: lineCount = 2; //language
+                        for (int i = 0; i < line.length(); i++)
+                        {
+                            char c = line.charAt(i);
+                            if (c != '\t')
+                            {
+                                nfaStates.add(""+c);
+                            }
                         }
-                    }
-                    lineCount++;
-                    break;
-                case 3: lineCount = 3; //start state
-                    startState = line;
-                    lineCount++;
-                    break;
-                case 4: lineCount = 4; //accept state
-                    for (character c in line){
-                        if (c != '\t'){
-                            nfaAcceptS.add(c);
+                        lineCount++;
+                        break;
+                    case 3: lineCount = 3; //start state
+                        startState = line;
+                        lineCount++;
+                        break;
+                    case 4: lineCount = 4; //accept state
+                        for (int i = 0; i < line.length(); i++)
+                        {
+                            char c = line.charAt(i);
+                            if (c != '\t')
+                            {
+                                nfaAcceptS.add(""+c);
+                            }
                         }
-                    }
-                    lineCount++;
-                    break;
-                default: //transitions 
-                    if(line.substring(2, 5) == "EPS")
-                        nfaEplisonRules.add(line);
-                    else
-                        nfaRules.add(line);
-                    break; 
-            }
-        
+                        lineCount++;
+                        break;
+                    default: //transitions 
+                        if(line.substring(2, 5) == "EPS")
+                            nfaEplisonRules.add(line);
+                        else
+                            nfaRules.add(line);
+                        break; 
+                }
+            
+            
             List<String> dfaStates = new ArrayList<String>();
             List<String> dfaAcceptS = new ArrayList<String>();
             List<String> dfaRules = new ArrayList<String>();
@@ -76,6 +90,11 @@ public class Main
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
         //calling the recursive method to create the dfaRules, begins with start state
+        }
+        catch(Exception e)
+        {
+            System.err.println("Invalid input");
+        }
     }
     
     public static List<String> epsClosureCreate(List<String> eplisonClosure)
