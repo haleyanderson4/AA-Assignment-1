@@ -207,14 +207,6 @@ public class Assignment1
                             solved = true;
                         }
                     }
-                    if(solved == false) //so only run through with the new state if it hasnt already been solved
-                    {
-                        runThrough(destinationState, nfaRules, dfaRules, dfaStates); // to see what else the state goes to
-                    }
-                    else
-                    {
-                        destinationState //needs to be added to the list, but differentiate between letters
-                    }
                 }
             }
         }
