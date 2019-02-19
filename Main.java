@@ -77,19 +77,42 @@ public class Main
                             nfaRules.add(line);
                         break; 
                 }
-            
-            
-            List<String> dfaStates = new ArrayList<String>();
-            List<String> dfaAcceptS = new ArrayList<String>();
-            List<String> dfaRules = new ArrayList<String>();
-            //variable declarations
         }
+        List<String> dfaStates = new ArrayList<String>();
+        List<String> dfaAcceptS = new ArrayList<String>();
+        List<String> dfaRules = new ArrayList<String>();
+        //variable declarations
         
         List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
         epsClosureCreate(eplisonClosure, nfaEplisonRules); //method to populate eplison states
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
         //calling the recursive method to create the dfaRules, begins with start state
+        
+        // write DFA to new text file
+        FileWriter outFile = new FileWriter("DFAinformation.txt");
+        for(String str:dfaStates)
+        {
+            outFile.write(str);
+        }
+        outFile.write("\n");
+        for(String str:language)
+        {
+            outFile.write(str);
+        }
+        outFile.write("\n");
+        outFile.write(startState);
+        outFile.write("\n");
+        for(String str:dfaAcceptS)
+        {
+            outFile.write(str);
+        }
+        outFile.write("\n");
+        for(String str:dfaRules)
+        {
+            outFile.write(str);
+        }
+        outFile.close();
         }
         catch(Exception e)
         {
