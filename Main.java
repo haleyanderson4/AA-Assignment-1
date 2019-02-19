@@ -84,7 +84,7 @@ public class Main
         //variable declarations
         
         List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
-        epsClosureCreate(eplisonClosure, nfaEplisonRules); //method to populate eplison states
+        epsClosureCreate(eplisonClosure, nfaEplisonRules, nfaStates); //method to populate eplison states
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
         //calling the recursive method to create the dfaRules, begins with start state
@@ -120,7 +120,7 @@ public class Main
         }
     }
     
-    public static List<String> epsClosureCreate(List<String> eplisonClosure, List<String> nfaEplisonRules)
+    public static List<String> epsClosureCreate(List<String> eplisonClosure, List<String> nfaEplisonRules, List<String> nfaStates)
     {
         for(int checkState = 0; checkState < nfaStates; checkState++) //looping through all states in original NFA
         {
