@@ -1,7 +1,7 @@
 /**
  * @TODO
- * Parsing
- * Conversion
+ * Fix epsilon closure
+ * fix find destination
  */
 
 import java.util.*;
