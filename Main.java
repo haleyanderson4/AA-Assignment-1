@@ -16,28 +16,28 @@ public class Assignment1
         try
         {
             File file = null;
-            if (0 < args.length) 
+            if (0 < args.length)
             {
                file = new File(args[0]);
-            } 
-            else 
+            }
+            else
             {
                System.err.println("Invalid arguments count:" + args.length);
-            } 
-            Scanner sc = new Scanner(file); 
-            
+            }
+            Scanner sc = new Scanner(file);
+
             List<String> nfaStates = new ArrayList<String>();
             List<String> language = new ArrayList<String>();
             String startState = "";
             Set<String> nfaAcceptS = new HashSet<String>();
             List<String> nfaRules = new ArrayList<String>();
             List<String> nfaEplisonRules = new ArrayList<String>();
-            
+
             int lineCount = 1;
             while (sc.hasNextLine())  //loop through all the lines in text file
-            {  
+            {
                 String line = sc.nextLine();
-                switch (lineCount){  
+                switch (lineCount){
                     case 1: lineCount = 1;  //taking in states
                         for (int i = 0; i < line.length(); i++)
                         {
@@ -75,7 +75,7 @@ public class Assignment1
                         }
                         lineCount++;
                         break;
-                    default: //transitions 
+                    default: //transitions
                         if(line.contains("EPS"))
                         {
                             nfaEplisonRules.add(line);
@@ -94,6 +94,7 @@ public class Assignment1
 
             List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
             epsClosureCreate(eplisonClosure, nfaEplisonRules, nfaStates); //method to populate eplison states
+            System.out.println(eplisonClosure);
 
             //runThrough(startState, nfaRules, dfaRules, dfaStates);
             //calling the recursive method to create the dfaRules, begins with start state
@@ -144,11 +145,11 @@ public class Assignment1
                     newState = newState + "," + destinationState; //this is creating the grouped state
                  } //do this for all rules
             }
-            
+
             newState = newState + "}"; //end the eplison state pairing
             eplisonClosure.add(newState); //add to epsilon list!
-        } //creates the combined eplison state we will be moving into 
-        
+        } //creates the combined eplison state we will be moving into
+
         for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that all epsilon closures are complete
         {
             String eplisonState = "";
@@ -173,14 +174,14 @@ public class Assignment1
         } // do this until we know it doesnt eplison to anything else
         return eplisonClosure;
     }
-    
-    public static String findDestination(String currentState, String letter)
+
+    public static String findDestination(String currentState, String letter, List<String> nfaRules)
     {
         String destinationState = ""; //this is the state we will go to next
 
         for(int stateCount = 0; stateCount < currentState.length(); stateCount++) // if our current state has multiple states
         {
-            if(currentState.charAt(stateCount) == ('{' || ',' || '}') ) //so we're not looking at nothing
+            if(currentState.charAt(stateCount) == '{' || currentState.charAt(stateCount) == ',' || currentState.charAt(stateCount) == '}') //so we're not looking at nothing
             {
                 continue;
             }
@@ -190,7 +191,7 @@ public class Assignment1
             {
                 String ruleState = nfaRules.get(rules).substring(0, 1); //to get the state of the rule we are looking at
                 if(ruleState != state || //only look at rules that deal with the state we currently have
-                   ( currentState.charAt(stateCount) == ('{' || ',' || '}') ) ) //so we're not looking at nothing
+                   ( currentState.charAt(stateCount) == '{' || currentState.charAt(stateCount) == ',' || currentState.charAt(stateCount) == '}') ) //so we're not looking at nothing
                 {
                     continue;
                 }
@@ -199,32 +200,24 @@ public class Assignment1
                     String currentRule = nfaRules.get(rules); //this is the full rule we are looking at
                     destinationState = destinationState + "," + currentRule.substring(4); //adding this rule's destination state to the overall destination state
 
-                    boolean sovled = false;
-                    for(int i = 0; i < dfaStates.size(); i++)
-                    {
-                        if(dfaStates.get(i).substring(0,-1) == destinationState) //if that state has already been solved
-                        {
-                            solved = true;
-                        }
-                    }
                 }
             }
         }
 
-        return newState;
+        return destinationState;
     }
 
-    public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> dfaStates)
+    public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> nfaRules, List<String> dfaStates)
     {
       for(int letterNum = 0; letterNum < language.size(); letterNum++)
       {
           String letter = language.get(letterNum); //this is the letter we are finding the rule for
-          String destinationState = findDestination(currentState, letter); //calls the method to find the destination !
+          String destinationState = findDestination(currentState, letter, nfaRules); //calls the method to find the destination !
 
           String newRule = currentState + "," + letter + "=" + destinationState; // creates the new rule
           dfaRules.add(newRule); //adds new rule to the list
 
-          boolean sovled = false;
+          boolean solved = false;
           for(int i = 0; i < dfaStates.size(); i++)
           {
               if(dfaStates.get(i).substring(0,-1) == destinationState) //if that state has already been solved
@@ -234,7 +227,7 @@ public class Assignment1
           }
           if(solved == false) //so only run through with the new state if it hasnt already been solved
           {
-              letterByLetter(destinationState, language, dfaRules, dfaStates); // to see what else the state goes to
+              letterByLetter(destinationState, language, dfaRules, nfaRules, dfaStates); // to see what else the state goes to
               dfaStates.add(destinationState);
           }
       }
