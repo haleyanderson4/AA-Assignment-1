@@ -1,7 +1,7 @@
 /**
- * @TODO
- * Fix epsilon closure
- * fix find destination
+ * Haley Anderson and Jennifer Prosinski
+ * CPSC 406: Algorithm Analysis
+ * Assignment 1: NFA to DFA Converter
  */
 
 import java.util.*;
@@ -29,7 +29,7 @@ public class Assignment1
             List<String> nfaStates = new ArrayList<String>();
             List<String> language = new ArrayList<String>();
             String startState = "";
-            Set<String> nfaAcceptS = new HashSet<String>();
+            List<String> nfaAcceptS = new ArrayList<String>();
             List<String> nfaRules = new ArrayList<String>();
             List<String> nfaEplisonRules = new ArrayList<String>();
 
@@ -94,36 +94,52 @@ public class Assignment1
 
             List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
             epsClosureCreate(eplisonClosure, nfaEplisonRules, nfaStates); //method to populate eplison states
-            for(int i = 0; i < eplisonClosure.size(); i++)
-            {
-              System.out.println(eplisonClosure.get(i));
-            }
 
-            //runThrough(startState, nfaRules, dfaRules, dfaStates);
+            letterByLetter(startState, language, dfaRules, nfaRules, dfaStates, eplisonClosure);
             //calling the recursive method to create the dfaRules, begins with start state
+
+            for(int i = 0; i < dfaStates.size(); i++) //loop through all dfa states
+            {
+              String currentState = dfaStates.get(i);
+              boolean add = false;
+              for(int j = 0; j < currentState.length(); j++) //look at each of the states that compose the current state
+              {
+                for(int k = 0; k < nfaAcceptS.size(); k++) //look at all of the accept states for the nfa
+                {
+                  if(("" + currentState.charAt(j)).equals(nfaAcceptS.get(k))) //if an nfa accept state is in our current dfa state
+                  {
+                    add = true; //marks it
+                  }
+                }
+              }
+              if(add)
+              {
+                dfaAcceptS.add(currentState); //if the current state has an accept state add it to the dfa accept states
+              }
+            }
 
             // write DFA to new text file
             FileWriter outFile = new FileWriter("DFAinformation.txt");
             for(String str:dfaStates)
             {
-                outFile.write(str);
+                outFile.write(str + '\t');
             }
             outFile.write("\n");
             for(String str:language)
             {
-                outFile.write(str);
+                outFile.write(str + '\t');
             }
             outFile.write("\n");
             outFile.write(startState);
             outFile.write("\n");
             for(String str:dfaAcceptS)
             {
-                outFile.write(str);
+                outFile.write(str + '\t');
             }
             outFile.write("\n");
             for(String str:dfaRules)
             {
-                outFile.write(str);
+                outFile.write(str + "\n");
             }
             outFile.close();
             }
@@ -132,6 +148,7 @@ public class Assignment1
                 System.err.println("Invalid input");
             }
         }
+
 
     public static List<String> epsClosureCreate(List<String> eplisonClosure, List<String> nfaEplisonRules, List<String> nfaStates)
     { //do this for all rules
@@ -151,6 +168,7 @@ public class Assignment1
       return eplisonClosure;
     }
 
+
     public static String epCloseChecker(String destinationState, List<String> eplisonClosure)
     {
       String cascadingDestination = "";
@@ -159,69 +177,71 @@ public class Assignment1
           String epCloseStartState = eplisonClosure.get(i).substring(1,2); //the state set
           if(epCloseStartState.equals(destinationState)) //if the destination state has its own destination state, grab it
           {
-              cascadingDestination = eplisonClosure.get(i).substring(3,-1); //getting the not start state and not brackets
+              cascadingDestination = eplisonClosure.get(i).substring(3,eplisonClosure.get(i).length()-1); //getting the not start state and not brackets
           }
       }
       return cascadingDestination;
     }
 
-    public static String findDestination(String currentState, String letter, List<String> nfaRules)
-    {
-        String destinationState = ""; //this is the state we will go to next
 
-        for(int stateCount = 0; stateCount < currentState.length(); stateCount++) // if our current state has multiple states
-        {
-            if(currentState.charAt(stateCount) == '{' || currentState.charAt(stateCount) == ',' || currentState.charAt(stateCount) == '}') //so we're not looking at nothing
-            {
-                continue;
-            }
-
-            String state = "" + currentState.charAt(stateCount); //the actual state we are finding the next of
-            for(int rules = 0; rules < nfaRules.size(); rules++) //loop through rules to see where this state goes
-            {
-                String ruleState = nfaRules.get(rules).substring(0, 1); //to get the state of the rule we are looking at
-                if(ruleState != state || //only look at rules that deal with the state we currently have
-                   ( currentState.charAt(stateCount) == '{' || currentState.charAt(stateCount) == ',' || currentState.charAt(stateCount) == '}') ) //so we're not looking at nothing
-                {
-                    continue;
-                }
-                else //if the state in the rule is what we are currently at
-                {
-                    String currentRule = nfaRules.get(rules); //this is the full rule we are looking at
-                    destinationState = destinationState + "," + currentRule.substring(4); //adding this rule's destination state to the overall destination state
-
-                }
-            }
-        }
-
-        return destinationState;
-    }
-
-    public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> nfaRules, List<String> dfaStates)
+    public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> nfaRules, List<String> dfaStates, List<String> eplisonClosure)
     {
       for(int letterNum = 0; letterNum < language.size(); letterNum++)
       {
           String letter = language.get(letterNum); //this is the letter we are finding the rule for
-          String destinationState = findDestination(currentState, letter, nfaRules); //calls the method to find the destination !
+          String destinationState = "{";
+          for(int stateCount = 0; stateCount < currentState.length(); stateCount++) // if our current state has multiple states
+          {
+            if(currentState.charAt(stateCount) == '{' || currentState.charAt(stateCount) == ',' || currentState.charAt(stateCount) == '}')
+            {
+                continue; //so we're not looking at nothing
+            }
+            destinationState = destinationState + findDestination(("" + currentState.charAt(stateCount)), letter, nfaRules, eplisonClosure) + ","; //calls the method to find the destination !
+          }
+          destinationState = destinationState.substring(0,destinationState.length()-1) + "}"; // removing the last , and adding a close bracket
 
           String newRule = currentState + "," + letter + "=" + destinationState; // creates the new rule
           dfaRules.add(newRule); //adds new rule to the list
+          /*THIS MAY NOT BE THE RIGHT PLACE FOR THIS STATEMENT!*/dfaStates.add(destinationState); // add to list of dfa states
 
           boolean solved = false;
           for(int i = 0; i < dfaStates.size(); i++)
           {
-              if(dfaStates.get(i).substring(0,-1) == destinationState) //if that state has already been solved
+              if(dfaStates.get(i).equals(destinationState)) //if that state has already been solved
               {
                   solved = true;
               }
           }
           if(solved == false) //so only run through with the new state if it hasnt already been solved
           {
-              letterByLetter(destinationState, language, dfaRules, nfaRules, dfaStates); // to see what else the state goes to
-              dfaStates.add(destinationState);
+              letterByLetter(destinationState, language, dfaRules, nfaRules, dfaStates, eplisonClosure); // to see what else the state goes to
           }
       }
       return dfaRules;
     }
 
+
+    public static String findDestination(String currentState, String letter, List<String> nfaRules, List<String> eplisonClosure)
+    {
+        String destinationState = ""; //this is the state we will go to next
+        for(int i = 0; i < nfaRules.size(); i++) //loop through rules to see where this state goes
+        {
+            String currentRule = nfaRules.get(i); //this is the full rule we are looking at
+            String ruleState = currentRule.substring(0, 1); //to get the state of the rule we are looking at
+            if(ruleState.equals(currentState)) //only look at rules that deal with the state we currently have
+            {
+              destinationState = currentRule.substring(4); //adding this rule's destination state to the overall destination state
+              for(int j = 0; j < eplisonClosure.size(); j++)
+              {
+                String epCloseStartState = eplisonClosure.get(j).substring(1,2);
+                if(epCloseStartState.equals(destinationState)) //if this end state has more states to go to after
+                {
+                  destinationState = destinationState + eplisonClosure.get(j).substring(2); //get all the cascading destination states
+                }
+              }
+            }
+        }
+
+        return destinationState.substring(0,destinationState.length()-1); //returning the full destination state without the final }
+    }
 }
