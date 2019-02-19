@@ -141,21 +141,22 @@ public class Assignment1
           String endState = nfaEplisonRules.get(checkRule).substring(6); //pulls the destination state from the rule
           String epCloseState = "{" + startState + "," + endState + "}"; // concatenates them to form the ep close state
 
-          String closeCheck = epCloseChecker(String endState, eplisonClosure); // if there is a cascading ep close step it returns that
+          String closeCheck = epCloseChecker(endState, eplisonClosure); // if there is a cascading ep close step it returns that
           if(closeCheck != "") // if not null another step to be added
           {
               epCloseState = "{" + startState + "," + endState + "," + closeCheck + "}"; //creating new rule
           }
           eplisonClosure.add(epCloseState); //add to epsilon list!
       }
+      return eplisonClosure;
     }
 
     public static String epCloseChecker(String destinationState, List<String> eplisonClosure)
     {
+      String cascadingDestination = "";
       for(int i = 0; i < eplisonClosure.size(); i++) //now were checking that all epsilon closures are complete
       {
           String epCloseStartState = eplisonClosure.get(i).substring(1,2); //the state set
-          String cascadingDestination = "";
           if(epCloseStartState.equals(destinationState)) //if the destination state has its own destination state, grab it
           {
               cascadingDestination = eplisonClosure.get(i).substring(3,-1); //getting the not start state and not brackets
