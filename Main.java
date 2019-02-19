@@ -76,11 +76,15 @@ public class Assignment1
                         lineCount++;
                         break;
                     default: //transitions 
-                        if(line.substring(2, 5) == "EPS")
+                        if(line.contains("EPS"))
+                        {
                             nfaEplisonRules.add(line);
+                        }
                         else
+                        {
                             nfaRules.add(line);
-                        break; 
+                        }
+                        break;
                 }
             }
             List<String> dfaStates = new ArrayList<String>();
