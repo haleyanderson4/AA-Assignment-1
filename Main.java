@@ -170,20 +170,18 @@ public class Assignment1
         return eplisonClosure;
     }
     
-    public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
+    public static String findDestination(String currentState, String letter)
     {
-        String destinationState = "{"; //this is the state we will go to next
-        String newRule = currentState + ",";
-        
+        String destinationState = ""; //this is the state we will go to next
+
         for(int stateCount = 0; stateCount < currentState.length(); stateCount++) // if our current state has multiple states
         {
             if(currentState.charAt(stateCount) == ('{' || ',' || '}') ) //so we're not looking at nothing
             {
                 continue;
             }
-            //need to split this into looking for one letter of the alphabet at a time
-            
-            String state = currentState.substring(stateCount, stateCount + 1); //the actual state we are finding the next of
+
+            String state = "" + currentState.charAt(stateCount); //the actual state we are finding the next of
             for(int rules = 0; rules < nfaRules.size(); rules++) //loop through rules to see where this state goes
             {
                 String ruleState = nfaRules.get(rules).substring(0, 1); //to get the state of the rule we are looking at
@@ -192,12 +190,11 @@ public class Assignment1
                 {
                     continue;
                 }
-                else
+                else //if the state in the rule is what we are currently at
                 {
                     String currentRule = nfaRules.get(rules); //this is the full rule we are looking at
-                    newRule = currentRule.substring(2,3); // adding the letter to the rule
                     destinationState = destinationState + "," + currentRule.substring(4); //adding this rule's destination state to the overall destination state
-                    
+
                     boolean sovled = false;
                     for(int i = 0; i < dfaStates.size(); i++)
                     {
@@ -217,7 +214,35 @@ public class Assignment1
                 }
             }
         }
-        
+
         return newState;
     }
+
+    public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> dfaStates)
+    {
+      for(int letterNum = 0; letterNum < language.size(); letterNum++)
+      {
+          String letter = language.get(letterNum); //this is the letter we are finding the rule for
+          String destinationState = findDestination(currentState, letter); //calls the method to find the destination !
+
+          String newRule = currentState + "," + letter + "=" + destinationState; // creates the new rule
+          dfaRules.add(newRule); //adds new rule to the list
+
+          boolean sovled = false;
+          for(int i = 0; i < dfaStates.size(); i++)
+          {
+              if(dfaStates.get(i).substring(0,-1) == destinationState) //if that state has already been solved
+              {
+                  solved = true;
+              }
+          }
+          if(solved == false) //so only run through with the new state if it hasnt already been solved
+          {
+              letterByLetter(destinationState, language, dfaRules, dfaStates); // to see what else the state goes to
+              dfaStates.add(destinationState);
+          }
+      }
+      return dfaRules;
+    }
+
 }
