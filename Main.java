@@ -86,7 +86,7 @@ public class Main
         }
         
         List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
-        epsClosureCreate(eplisonClosure); //method to populate eplison states
+        epsClosureCreate(eplisonClosure, nfaEplisonRules); //method to populate eplison states
         
         runThrough(startState, nfaRules, dfaRules, dfaStates);
         //calling the recursive method to create the dfaRules, begins with start state
@@ -97,7 +97,7 @@ public class Main
         }
     }
     
-    public static List<String> epsClosureCreate(List<String> eplisonClosure)
+    public static List<String> epsClosureCreate(List<String> eplisonClosure, List<String> nfaEplisonRules)
     {
         for(int checkState = 0; checkState < nfaStates; checkState++) //looping through all states in original NFA
         {
@@ -110,21 +110,34 @@ public class Main
                  {
                     String destinationState = nfaEplisonRules.get(checkRule).substring(6));
                     newState = newState + "," + destinationState; //this is creating the grouped state
-                    for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that the destination state isnt an eplison closure
-                    {
-                        String current = eplisonClosure.get(alreadyClosed); //the state set
-                        String eplisonState = current.substring(1,2); //to skip the { and look at the first state
-                        if(eplisonState == desintationState) //if they match
-                        {
-                            newState = "," + eplisonState.substring(1,-1); // add the cascading effect to the state we are looking at
-                        }
-                    } // do this until we know it doesnt eplison to anything else
                  } //do this for all rules
             }
             
             newState = newState + "}"; //end the eplison state pairing
             eplisonClosure.add(newState); //add to epsilon list!
         } //creates the combined eplison state we will be moving into 
+        
+        for(int alreadyClosed = 0; alreadyClosed < eplisonClosure.size(); alreadyClosed++) //now were checking that all epsilon closures are complete
+        {
+            String currentState = eplisonClosure.get(alreadyClosed); //the state set
+            for(int comparisonClose = 0; comparisonClose < eplisonClosure.size(); comparisonClose++) //now were checking that all epsilon closures are complete
+            {
+                if(alreadyClosed == comparisonClose)
+                {
+                    continue; //don't want to compare a rule to itself
+                }
+                String stateRule = eplisonClosure.get(comparisonState);
+                for(int stateChars = 1; stateChars < stateRule.length(); stateChars++) //go through all of the states mentioned in the epsilon closure
+                {
+                    String eplisonState = stateRule.substring(stateChars,stateChars+1); //to skip the { and look at the first state
+                    if(eplisonState == currentState) //if they match
+                    {
+                        eplisonState = eplisonState.substring(0,-1) + "," + eplisonState.substring(3); // add the cascading effect to the state we are looking at
+                    }
+                }
+            }
+            eplisonClosure.edit(alreadyClosed, eplisonState); //now a full epsilon closure for sure!! wohoo!!
+        } // do this until we know it doesnt eplison to anything else
     }
     
     public static String runThrough(String currentState, List<String> nfaRules, List<String> dfaRules, List<String> dfaStates)
