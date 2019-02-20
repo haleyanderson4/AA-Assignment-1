@@ -26,6 +26,7 @@ public class Assignment1
             }
             Scanner sc = new Scanner(file);
 
+            //variable declarations
             List<String> nfaStates = new ArrayList<String>();
             List<String> language = new ArrayList<String>();
             String startState = "";
@@ -145,6 +146,7 @@ public class Assignment1
             }
             catch(Exception e)
             {
+                System.out.println(e);
                 System.err.println("Invalid input");
             }
         }
@@ -186,6 +188,8 @@ public class Assignment1
 
     public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> nfaRules, List<String> dfaStates, List<String> eplisonClosure)
     {
+      Stack<String> checkStatesStack = new Stack<String>(); // a stack to put the destination states in so we can check that they are solved after running through all letters
+
       for(int letterNum = 0; letterNum < language.size(); letterNum++)
       {
           String letter = language.get(letterNum); //this is the letter we are finding the rule for
@@ -196,27 +200,40 @@ public class Assignment1
             {
                 continue; //so we're not looking at nothing
             }
-            destinationState = destinationState + findDestination(("" + currentState.charAt(stateCount)), letter, nfaRules, eplisonClosure) + ","; //calls the method to find the destination !
-          }
+            String destination = findDestination(("" + currentState.charAt(stateCount)), letter, nfaRules, eplisonClosure);
+            if(destination.equals("")) //if there is no rule for this state and letter
+            {
+              destinationState = currentState;
+            }
+            destinationState = destinationState + destination + ","; //calls the method to find the destination !
+          } System.out.println(destinationState);
           destinationState = destinationState.substring(0,destinationState.length()-1) + "}"; // removing the last , and adding a close bracket
 
           String newRule = currentState + "," + letter + "=" + destinationState; // creates the new rule
           dfaRules.add(newRule); //adds new rule to the list
-          /*THIS MAY NOT BE THE RIGHT PLACE FOR THIS STATEMENT!*/dfaStates.add(destinationState); // add to list of dfa states
+          checkStatesStack.push(destinationState); //puts the state on the stack to be checked later
+          System.out.println(nfaRules + "\n" + currentState + "     " + letter + "       " + destinationState + "\n" + checkStatesStack);
 
-          boolean solved = false;
-          for(int i = 0; i < dfaStates.size(); i++)
-          {
-              if(dfaStates.get(i).equals(destinationState)) //if that state has already been solved
-              {
-                  solved = true;
-              }
-          }
-          if(solved == false) //so only run through with the new state if it hasnt already been solved
-          {
-              letterByLetter(destinationState, language, dfaRules, nfaRules, dfaStates, eplisonClosure); // to see what else the state goes to
-          }
       }
+
+      while(!checkStatesStack.empty())
+      {
+        String destinationState = checkStatesStack.pop();
+        boolean solved = false;
+        for(int i = 0; i < dfaStates.size(); i++)
+        {
+            if(dfaStates.get(i).equals(destinationState)) //if that state has already been solved
+            {
+                solved = true;
+            }
+        }
+        if(solved == false) //so only run through with the new state if it hasnt already been solved
+        {
+            dfaStates.add(destinationState); // add to list of dfa states after the solved loop for no confusion
+            letterByLetter(destinationState, language, dfaRules, nfaRules, dfaStates, eplisonClosure); // to see what else the state goes to
+        }
+      } //once every hit destination stack gets called we're good!!
+
       return dfaRules;
     }
 
