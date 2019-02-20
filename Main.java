@@ -96,6 +96,13 @@ public class Assignment1
             List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
             epsClosureCreate(eplisonClosure, nfaEplisonRules, nfaStates); //method to populate eplison states
 
+            //check if the start state needs an epsilon closure
+            String closeCheck = epCloseChecker(startState, eplisonClosure); // if there is a cascading ep close step it returns that
+            if(closeCheck != "") // if not null another step to be added
+            {
+                startState = "{" + startState + "," + closeCheck + "}"; //creating new rule
+            }
+
             letterByLetter(startState, language, dfaRules, nfaRules, dfaStates, eplisonClosure);
             //calling the recursive method to create the dfaRules, begins with start state
 
@@ -121,7 +128,7 @@ public class Assignment1
 
             // write DFA to new text file
             FileWriter outFile = new FileWriter("DFAinformation.txt");
-            for(String str:dfaStates) //loop through list and write states to file with tab
+            for(String str:dfaStates)
             {
                 outFile.write(str + '\t');
             }
