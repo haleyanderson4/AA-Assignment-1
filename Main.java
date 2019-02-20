@@ -192,6 +192,7 @@ public class Assignment1
 
       for(int letterNum = 0; letterNum < language.size(); letterNum++)
       {
+          boolean noRule = false; //if there is no rule for the letter and state combination this turns true
           String letter = language.get(letterNum); //this is the letter we are finding the rule for
           String destinationState = "{";
           for(int stateCount = 0; stateCount < currentState.length(); stateCount++) // if our current state has multiple states
@@ -200,13 +201,20 @@ public class Assignment1
             {
                 continue; //so we're not looking at nothing
             }
-            String destination = findDestination(("" + currentState.charAt(stateCount)), letter, nfaRules, eplisonClosure);
+            String destination = findDestination(("" + currentState.charAt(stateCount)), letter, nfaRules, eplisonClosure); //calls the method to find the destination !
+  System.out.println("yo " + currentState + "      " + letter + "     " + destination);
             if(destination.equals("")) //if there is no rule for this state and letter
             {
-              destinationState = currentState;
+              System.out.println("nice     " + destination);
+              noRule = true;
             }
-            destinationState = destinationState + destination + ","; //calls the method to find the destination !
-          } System.out.println(destinationState);
+            destinationState = destinationState + destination + ",";
+          }
+          if(noRule)
+          { System.out.println("WHYYYYYY");
+            continue;
+          }
+          System.out.println("wut" + destinationState);
           destinationState = destinationState.substring(0,destinationState.length()-1) + "}"; // removing the last , and adding a close bracket
 
           String newRule = currentState + "," + letter + "=" + destinationState; // creates the new rule
@@ -245,7 +253,8 @@ public class Assignment1
         {
             String currentRule = nfaRules.get(i); //this is the full rule we are looking at
             String ruleState = currentRule.substring(0, 1); //to get the state of the rule we are looking at
-            if(ruleState.equals(currentState)) //only look at rules that deal with the state we currently have
+            String ruleLetter = currentRule.substring(2, 3); //to get the letter of the rule we are looking at
+            if(ruleState.equals(currentState) && ruleLetter.equals(letter)) //only look at rules that deal with the state & letter we currently have
             {
               destinationState = currentRule.substring(4); //adding this rule's destination state to the overall destination state
               for(int j = 0; j < eplisonClosure.size(); j++)
@@ -259,6 +268,11 @@ public class Assignment1
             }
         }
 
-        return destinationState.substring(0,destinationState.length()-1); //returning the full destination state without the final }
+        if(destinationState.length() > 1) //if there are more than 1 state it drops the }
+        {
+          destinationState = destinationState.substring(0, destinationState.length()-1);
+        }
+
+        return destinationState; //returning the full destination state without the final }
     }
 }
