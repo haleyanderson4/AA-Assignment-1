@@ -5,8 +5,7 @@
  */
 
  /**
-  * fix start state to be epsilon close state
-  * fix find destination for rule & letter combos with multiple destinations
+  * fix find destination to remove repeating states
  */
 
 import java.util.*;
@@ -250,7 +249,6 @@ public class Assignment1
     public static List<String> letterByLetter(String currentState, List<String> language, List<String> dfaRules, List<String> nfaRules, List<String> dfaStates, List<String> eplisonClosure, List<String> repeatingRules)
     {
       Stack<String> checkStatesStack = new Stack<String>(); // a stack to put the destination states in so we can check that they are solved after running through all letters
-      Stack<Integer> checkForRepeats = new Stack<Integer>(); // to make sure there are no repeating states in a destination
 
       for(int letterNum = 0; letterNum < language.size(); letterNum++)
       {
@@ -263,27 +261,7 @@ public class Assignment1
                 continue; //so we're not looking at nothing
             }
             String destination = findDestination(("" + currentState.charAt(stateCount)), letter, nfaRules, eplisonClosure, repeatingRules); //calls the method to find the destination !
-System.out.println("yo " + currentState + "      " + letter + "     " + destination);
-            for(int i = 0; i < destinationState.length(); i++)
-            {
-              char state1 = destinationState.charAt(i);
-              if(state1 == '{' || state1 == ',') { continue; } //look at only the states
-              for(int j = 0; j < destinationState.length(); j++)
-              {
-                char state2 = destinationState.charAt(j);
-                if(i == j) { continue; } //dont want to look at the same index
-                if(state2 == '{' || state2 == ',') { continue; } //look at only the states
-                if(state1 == state2)
-                {
-                  checkForRepeats.push(i);
-                }
-              }
-            }
-            while(!checkForRepeats.empty())
-            {
-              int index = checkForRepeats.pop();
-              destinationState = destinationState.substring(0,index-1) + destinationState.substring(index+1);
-            }
+//System.out.println("yo " + currentState + "      " + letter + "     " + destination);
 
             if(!destination.equals("")) //if there is a rule for this state and letter combo
             {
@@ -292,8 +270,47 @@ System.out.println("yo " + currentState + "      " + letter + "     " + destinat
           }
           if(destinationState.equals("{"))
           {
-System.out.println("WHYYYYYY");
             continue;
+          }
+          else
+          {
+            //CHECKING FOR REPEATING STATES
+            String destinationCopy = "";
+
+            for(int i = 0; i < destinationState.length(); i++)
+            {
+              char currentChar = destinationState.charAt(i);
+              if(currentChar != '{' && currentChar != '}' && currentChar != ',')
+              {
+                destinationCopy = destinationCopy + currentChar;
+              }
+            }
+            char tempCharArray[] = destinationCopy.toCharArray(); // convert input string to char array
+            Arrays.sort(tempCharArray); // sort tempArray
+            char compareToNext = tempCharArray[0];
+            for(int j = 1; j < tempCharArray.length; j++) //now to delete the multiples, since it is now sorted everything will be in line
+            {
+              if(tempCharArray[j] != compareToNext) //if an element is equal to the one next to it, its a repeat
+              {
+                compareToNext = tempCharArray[j]; //if its not a repeat, move to the new element
+              }
+              else
+              {
+                tempCharArray[j] = '/'; //if it is a repeat, null out that element
+              }
+            }
+
+            destinationCopy = "{"; //start this over
+            for(int i = 0; i < tempCharArray.length; i++) //recombine to a string
+            {
+              if(tempCharArray[i] != '/') //if its null dont put it in
+              {
+                destinationCopy = destinationCopy + tempCharArray[i] + ","; //put a comma after all the numbers
+              }
+            }
+
+            destinationState = destinationCopy; //recombine into a string with proper format
+            //BACK TO OTHER STUFF
           }
 System.out.println("wut" + destinationState);
           destinationState = destinationState.substring(0,destinationState.length()-1) + "}"; // removing the last , and adding a close bracket
@@ -348,7 +365,6 @@ System.out.println("wut" + destinationState);
                 destinationState = destinationState + eplisonClosure.get(j).substring(2); //get all the cascading destination states
               }
             }
-System.out.println(repeatingRules +  "\n" + "HEY WHAT UP " + destinationState);
             return destinationState;
           }
         }
