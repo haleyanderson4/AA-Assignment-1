@@ -40,12 +40,12 @@ public class Assignment1
                 String line = sc.nextLine();
                 switch (lineCount){
                     case 1: lineCount = 1;  //taking in states
-                        for (int i = 0; i < line.length(); i++)
+                        for (int i = 0; i < line.length(); i++) //loop through the line 
                         {
                             char c = line.charAt(i);
                             if (c != '\t')
                             {
-                                nfaStates.add(""+c);
+                                nfaStates.add(""+c); //add the states to the list and ignore the tabs
                             }
                         }
                         lineCount++;
@@ -77,13 +77,13 @@ public class Assignment1
                         lineCount++;
                         break;
                     default: //transitions
-                        if(line.contains("EPS"))
+                        if(line.contains("EPS")) //add rule with epsilon transitions to special list
                         {
                             nfaEplisonRules.add(line);
                         }
                         else
                         {
-                            nfaRules.add(line);
+                            nfaRules.add(line); //add rest to rule list
                         }
                         break;
                 }
@@ -121,7 +121,7 @@ public class Assignment1
 
             // write DFA to new text file
             FileWriter outFile = new FileWriter("DFAinformation.txt");
-            for(String str:dfaStates)
+            for(String str:dfaStates) //loop through list and write states to file with tab
             {
                 outFile.write(str + '\t');
             }
