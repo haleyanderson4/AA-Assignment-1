@@ -4,6 +4,11 @@
  * Assignment 1: NFA to DFA Converter
  */
 
+ /**
+  * fix start state to be epsilon close state
+  * fix find destination for rule & letter combos with multiple destinations
+ */
+
 import java.util.*;
 import java.lang.String;
 import java.io.*;
