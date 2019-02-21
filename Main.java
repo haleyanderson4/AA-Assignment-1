@@ -12,7 +12,7 @@ import java.util.*;
 import java.lang.String;
 import java.io.*;
 
-public class Assignment1
+public class Main
 {
 
     public static void main(String[] args)
