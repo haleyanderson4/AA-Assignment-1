@@ -5,7 +5,6 @@
  */
 
  /**
- * TO DO:
   * fix the substring methods to include the { }
  */
 
@@ -104,7 +103,6 @@ public class Main
                         break;
                 }
             }
-            System.out.println("WHATTTT" + nfaRules);
             List<String> dfaStates = new ArrayList<String>();
             List<String> dfaAcceptS = new ArrayList<String>();
             List<String> dfaRules = new ArrayList<String>();
@@ -112,23 +110,20 @@ public class Main
 
             List<String> eplisonClosure = new ArrayList<String>(); //list of new eplison closure states
             epsClosureCreate(eplisonClosure, nfaEplisonRules, nfaStates); //method to populate eplison states
-            System.out.println("WHAT WHAT HDD      " + eplisonClosure);
 
             List<String> repeatingRules = new ArrayList<String>(); //list of rules for repeated leter & state combos
             doubleLetterStateCheck(language, nfaStates, nfaRules,repeatingRules); //methof to populate the repeating rules list
-            System.out.println("HEYYYEYEY       " + repeatingRules);
 
             //check if the start state needs an epsilon closure
             String closeCheck = epCloseChecker(startState, eplisonClosure); // if there is a cascading ep close step it returns that
             if(closeCheck != "") // if not null another step to be added
-            {System.out.println(closeCheck);
+            {
                 startState = "{" + startState + "," + closeCheck + "}"; //creating new rule
             }
             dfaStates.add(startState);
 
             letterByLetter(startState, language, dfaRules, nfaRules, dfaStates, eplisonClosure, repeatingRules);
             //calling the recursive method to create the dfaRules, begins with start state
-System.out.println("Yooosdfodos");
             for(int i = 0; i < dfaStates.size(); i++) //loop through all dfa states
             {
               String currentState = dfaStates.get(i);
@@ -224,7 +219,6 @@ System.out.println("Yooosdfodos");
       {
         if(firstSight && currentRule.charAt(a) == '}') //this would be the first } in the rule, ending the origin state
         {
-          System.out.println("start state    " + currentRule.substring(1 , a) + "       " + currentRule);
           firstSight = false;
           startState = currentRule.substring(1, a); //grab what is inside the { }, start state!!!
         }
@@ -241,7 +235,6 @@ System.out.println("Yooosdfodos");
       {
         if(firstSight && currentRule.charAt(a) == ',') //this would be the end of first state in the rule
         {
-          System.out.println("start state   epssss     " + currentRule.substring(1 , a) + "       " + currentRule);
           firstSight = false;
           startState = currentRule.substring(1, a); //grab what is inside the { }, start state!!!
         }
@@ -303,7 +296,6 @@ System.out.println("Yooosdfodos");
           for(int k = 0; k < nfaRules.size(); k++) // loop through all rules
           {
             String currentRule = nfaRules.get(k);
-            System.out.println("current rule   check state  " + currentRule);
             String ruleState = getStartState(currentRule); //to get the state of the rule we are looking at
             String ruleLetter = getLetter(currentRule); //to get the letter of the rule we are looking at
 
@@ -405,8 +397,6 @@ System.out.println("Yooosdfodos");
           String newRule = currentState + "," + letter + "=" + destinationState; // creates the new rule
           dfaRules.add(newRule); //adds new rule to the list
           checkStatesStack.push(destinationState); //puts the state on the stack to be checked later
-          System.out.println(nfaRules + "\n" + currentState + "     " + letter + "       " + destinationState + "\n" + checkStatesStack);
-
       }
 
       while(!checkStatesStack.empty())
@@ -438,7 +428,6 @@ System.out.println("Yooosdfodos");
         for(int k = 0; k < repeatingRules.size(); k++) //finds if the current state and letter combination is in the repeating rules
         {
           String currentRule = repeatingRules.get(k); //this is the full rule we are looking at
-          System.out.println("current rule   find dest  " + currentRule);
           String ruleState = getStartState(currentRule); //to get the state of the rule we are looking at
           String ruleLetter = getLetter(currentRule); //to get the letter of the rule we are looking at
 
@@ -460,7 +449,6 @@ System.out.println("Yooosdfodos");
         for(int i = 0; i < nfaRules.size(); i++) //loop through rules to see where this state goes
         {
             String currentRule = nfaRules.get(i); //this is the full rule we are looking at
-            System.out.println("current rule   find dest later  " + currentRule);
             String ruleState = getStartState(currentRule); //to get the state of the rule we are looking at
             String ruleLetter = getLetter(currentRule); //to get the letter of the rule we are looking at
             if(ruleState.equals(currentState) && ruleLetter.equals(letter)) //only look at rules that deal with the state & letter we currently have
@@ -468,7 +456,6 @@ System.out.println("Yooosdfodos");
               destinationState = getEndState(currentRule); //adding this rule's destination state to the overall destination state
               for(int j = 0; j < eplisonClosure.size(); j++)
               {
-                System.out.println("current rule   find dest even later  " + currentRule);
                 String epCloseStartState = getEpsStartState(eplisonClosure.get(j));
                 if(epCloseStartState.equals(destinationState)) //if this end state has more states to go to after
                 {
