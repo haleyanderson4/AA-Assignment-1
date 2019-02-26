@@ -141,7 +141,7 @@ public class Main
             }
 
             // write DFA to new text file
-            FileWriter outFile = new FileWriter("DFAinformation.txt");
+            FileWriter outFile = new FileWriter("DFAinformation.dfa");
             for(String str:dfaStates)
             {
                 outFile.write(str + '\t');
