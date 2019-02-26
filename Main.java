@@ -1,13 +1,7 @@
-
-    
 /**
  * Haley Anderson and Jennifer Prosinski
  * CPSC 406: Algorithm Analysis
  * Assignment 1: NFA to DFA Converter
- */
-
- /**
-  * fix the substring methods to include the { }
  */
 
 import java.util.*;
@@ -116,17 +110,14 @@ public class Main
 
             List<String> repeatingRules = new ArrayList<String>(); //list of rules for repeated leter & state combos
             doubleLetterStateCheck(language, nfaStates, nfaRules,repeatingRules, eplisonClosure); //methof to populate the repeating rules list
-            System.out.println(eplisonClosure);
+
             //check if the start state needs an epsilon closure
             String closeCheck = epCloseChecker(startState.substring(1,startState.length()-1), eplisonClosure); // if there is a cascading ep close step it returns that
             if(closeCheck != null && !closeCheck.isEmpty())// if not null another step to be added
             {
                 startState = "{" + startState.substring(1,startState.length()-1) + "," + closeCheck + "}"; //creating new rule
-                System.out.println("blahh");
             }
             dfaStates.add(startState);
-            System.out.println(closeCheck);
-            System.out.println(startState);
             letterByLetter(startState, language, dfaRules, nfaRules, dfaStates, eplisonClosure, repeatingRules);
             //calling the recursive method to create the dfaRules, begins with start state
             for(int i = 0; i < dfaStates.size(); i++) //loop through all dfa states
@@ -137,8 +128,6 @@ public class Main
               {
                 for(int k = 0; k < nfaAcceptS.size(); k++) //look at all of the accept states for the nfa
                 {
-                  System.out.println(nfaAcceptS);
-                  System.out.println(nfaAcceptS.get(k));
                   if(("" + currentState.charAt(j)).equals(nfaAcceptS.get(k))) //if an nfa accept state is in our current dfa state, ignoring brackets
                   {
                     add = true; //marks it
@@ -209,7 +198,6 @@ public class Main
       for(int i = 0; i < eplisonClosure.size(); i++) //now were checking that all epsilon closures are complete
       {
           String epCloseStartState = getEpsStartState(eplisonClosure.get(i)); //the state set
-          System.out.println(destinationState);
           if(epCloseStartState.equals(destinationState)) //if the destination state has its own destination state, grab it
           {
               cascadingDestination = eplisonClosure.get(i).substring(3,eplisonClosure.get(i).length()-1); //getting the not start state and not brackets
@@ -457,7 +445,6 @@ public class Main
                 destinationState = destinationState + eplisonClosure.get(j).substring(3); //get all the cascading destination states
               }
             }
-            System.out.println(ruleState + "  no   " + letter + "    " + destinationState);
             return destinationState;
           }
         }
@@ -469,7 +456,7 @@ public class Main
           if(epCloseStartState.equals(currentState)) //if this end state has more states to go to after
           {
             destinationState = destinationState + currentEpClose.substring(3, currentEpClose.length()-1) + ","; //get all the cascading destination states
-          } System.out.println("dest    " + currentEpClose.substring(3, currentEpClose.length()-1) + "       " + destinationState + " " + epCloseStartState);
+          } 
         }
 
 
@@ -484,11 +471,11 @@ public class Main
               for(int j = 0; j < eplisonClosure.size(); j++)
               {
                 String currentEpClose = eplisonClosure.get(j);
-                String epCloseStartState = getEpsStartState(currentEpClose); if(ruleLetter.equals("b")) { System.out.println("b    " + epCloseStartState); }
+                String epCloseStartState = getEpsStartState(currentEpClose);
                 if(epCloseStartState.equals(destinationState)) //if this end state has more states to go to after
                 {
                   destinationState = destinationState + "," + currentEpClose.substring(3, currentEpClose.length()-1); //get all the cascading destination states
-                } System.out.println("dest    " + currentEpClose.substring(3, currentEpClose.length()-1) + "       " + destinationState + " " + epCloseStartState);
+                } 
               }
             }
         }
@@ -498,7 +485,7 @@ public class Main
         {
           destinationState = destinationState.substring(1, destinationState.length()-1);
         }*/
-                  System.out.println(currentState + "     " + letter + "  hi   " + destinationState);
+
 
         return destinationState; //returning the full destination state without the final }
     }
